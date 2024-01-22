@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Cart - E-Shop</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=7,8,edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="{{url_for('static',filename='Swoader.js')}}" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" href="{{url_for('static',filename='style.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='cart.css')}}">
+    <script type="text/javascript" charset="utf-8">
+        var swoader = new Swoader("darkorange", "80","white");
+        swoader.start()
+        swoader.addText("loading","40px","white")
+        swoader.animateText()
+        swoader.removeWhenLoaded(5000)
+    </script>
+</head>
+<body>
+    <header>
+        <span class="logo"><a href="/">E-Shop</a></span>
+        <span id="sbar_toggler" onclick="onav()">&#8801;</span>
+        <div id="d_links">
+            <a class="sbar_links" href="/">Home</a>
+            {% if session.email %}
+                <a href="/logout" class="sbar_links">logout</a>
+            {% else %}
+                <a href="/login" class="sbar_links">login</a>
+                <a href="/signup" class="sbar_links">signup</a>
+            {% endif %}
+            <a href="/cart" class="sbar_links">cart</a>
+            <a class="sbar_links" href="/category/shoes">Shoes</a>
+            <a class="sbar_links" href="/category/gadgets">Gadgets</a>
+            <a class="sbar_links" href="/category/clothes">Clothes</a>
+        </div>
+    </header>
+    <div id="side_bar" style="transform: translateX(-100vw)">
+        <span id="hide_sbar" onclick="cnav()">&times;</span>
+        <div id="sbar_inner">
+            <a class="sbar_links" href="/">Home</a>
+            {% if session.email %}
+                <a href="/logout" class="sbar_links">logout</a>
+            {% else %}
+                <a href="/login" class="sbar_links">login</a>
+                <a href="/signup" class="sbar_links">signup</a>
+            {% endif %}
+            <a href="/cart" class="sbar_links">cart</a>
+            <a class="sbar_links" href="/category/shoes">Shoes</a>
+            <a class="sbar_links" href="/category/gadgets">Gadgets</a>
+            <a class="sbar_links" href="/category/clothes">Clothes</a>
+        </div>
+    </div>
+    <div id="main" style="margin-top:70px;">
+        <div class="cart">
+            {% if items %}
+                {% for id in items %}
+                    <div class="cart_card">
+                        <img src="{{ url_for('static', filename=Getcarddata(id).img()) }}" alt="{{ Getcarddata(id).pname() }}" height="200px" width="200px" class="cart_page_img"/>
+                        <span class="cart_page_name">{{ Getcarddata(id).pname() }}</span>
+                        <span class="price">{{ Getcarddata(id).price() }}</span>
+                        <button class="btn btn_primary"><a href="/rfromcart/{{ id }}">Remove</a></button>
+                    </div>
+                {% endfor %}
+                <div class="billing-section">
+                    <h2>Billing</h2>
+                    <strong><p>Total: ${{ total_price }}</p></strong>
+                </div>
+            {% else %}
+                <p>Your cart is empty.</p>
+            {% endif %}
+        </div>
+        <div class="checkout-section">
+            
+          <form action="/success" method="post">
+              <h2>Checkout</h2>
+                <!-- Add shipping information fields here -->
+                <label for="name">Full Name:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="address">Shipping Address:</label>
+                <textarea id="address" name="address" required></textarea>
+
+                <!-- Add card details fields here -->
+                <label for="card_number">Card Number:</label>
+                <input type="text" id="card_number" name="card_number" required>
+
+                <label for="expiry_date">Expiry Date:</label>
+                <input type="text" id="expiry_date" name="expiry_date" placeholder="MM/YY" required>
+
+                <label for="cvv">CVV:</label>
+                <input type="text" id="cvv" name="cvv" required>
+
+                <button type="submit" class="btn btn_primary" onclick="window.location.href='/success'">Checkout</button>
+            </form>
+        </div>
+    </div>
+    <script src="../static/main.js" type="text/javascript" charset="utf-8"></script>
+</body>
+</html>

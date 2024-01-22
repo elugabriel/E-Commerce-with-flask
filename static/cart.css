@@ -1,0 +1,52 @@
+/* cart.css */
+
+/* Existing styles ... */
+
+.cart, .checkout-section, .billing-section {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.billing-section {
+    width: 10%;
+}
+
+.checkout-section {
+    width: 50%;
+}
+
+.billing-section {
+    margin-right: 10%;
+    margin-left: 30%;  
+}
+
+.checkout-section form {
+    display: flex;
+    margin-left: 30%; 
+    flex-direction: column;
+    gap: 10px;  /* Add space between form elements */
+}
+
+.checkout-section label {
+    font-weight: bold;
+    
+}
+
+.checkout-section input,
+.checkout-section textarea {
+    padding: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.checkout-section button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
