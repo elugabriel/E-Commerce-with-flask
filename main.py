@@ -127,32 +127,75 @@ def login():
         email = request.form.get("email")
         password = request.form.get("pass")
 
+        # Check if the user exists
         user_query = User.query.filter_by(email=email).first()
-        if user_query and check_password_hash(user_query.password, password):
-            # Check if there is an existing OTP record for the user
-            otp_entry = OTPs.query.filter_by(email=email).first()
 
-            if otp_entry:
-                # If OTP record exists, update it with a new OTP
-                otp_entry.otp = generate_otp()
-                otp_entry.created_at = datetime.utcnow()
+        if user_query:
+            # Check if the password is correct
+            if check_password_hash(user_query.password, password):
+                # Reset incorrect login attempts counter
+                session.pop('login_attempts', None)
+
+                # Check if there is an existing OTP record for the user
+                otp_entry = OTPs.query.filter_by(email=email).first()
+
+                if otp_entry:
+                    # If OTP record exists, update it with a new OTP
+                    otp_entry.otp = generate_otp()
+                    otp_entry.created_at = datetime.utcnow()
+                else:
+                    # If no OTP record exists, create a new one
+                    otp_entry = OTPs(email=email, otp=generate_otp(), created_at=datetime.utcnow())
+
+                # Save or update the OTP entry
+                db.session.add(otp_entry)
+                db.session.commit()
+
+                # Send OTP to user's email
+                send_otp(email, otp_entry.otp)
+
+                session["email"] = email
+                return redirect(url_for('otp_verification'))
             else:
-                # If no OTP record exists, create a new one
-                otp_entry = OTPs(email=email, otp=generate_otp(), created_at=datetime.utcnow())
+                # Increment incorrect login attempts counter
+                login_attempts = session.get('login_attempts', 0) + 1
+                session['login_attempts'] = login_attempts
 
-            # Save or update the OTP entry
-            db.session.add(otp_entry)
-            db.session.commit()
+                # Check if the user has reached three incorrect login attempts
+                if login_attempts >= 3:
+                    # Send email notification about suspicious login
+                    send_suspicious_login_notification(email)
 
-            # Send OTP to user's email
-            send_otp(email, otp_entry.otp)
+                    # Redirect to reset password page
+                    flash("You have reached the maximum number of incorrect login attempts. Please reset your password.", "danger")
+                    return redirect(url_for('reset_password'))
 
-            session["email"] = email
-            return redirect(url_for('otp_verification'))
-        else:
-            return render_template("login.html", mess="Incorrect email or password")
+                # Display incorrect email or password message
+                return render_template("login.html", mess="Incorrect email or password")
 
     return render_template("login.html")
+
+def send_suspicious_login_notification(user_email):
+    # Add logic to send an email notification about suspicious login
+    # Use your existing email sending logic or modify as needed
+    smtp_server = "smtp.gmail.com"
+    smtp_port = 587
+    sender_email = 'gabrielelufidodo@gmail.com'
+    sender_password = 'eeinsljkveqthnur'
+
+    subject = 'Suspicious Login Alert'
+    message = f'Greetings,\n\nYour account with email {user_email} has experienced multiple incorrect login attempts, which may indicate suspicious activity. If this was not you, consider resetting your password.\n\nBest regards,\nThe Admin'
+
+    msg = MIMEText(message)
+    msg['Subject'] = subject
+    msg['From'] = sender_email
+    msg['To'] = user_email
+
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, [user_email], msg.as_string())
+
 
 
 @app.route("/otp_verification", methods=["POST", "GET"])
@@ -417,6 +460,14 @@ def new_password(email):
             flash('Failed to hash the password. Please try again.', 'danger')
 
     return render_template('new_password.html', email=email)
+
+
+
+@app.route('/admin')
+def admin():
+    # Add any necessary logic for the admin page
+    return render_template('admin.html')
+
 
 
 if __name__ == "__main__":

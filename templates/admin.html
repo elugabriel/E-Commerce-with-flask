@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Signup - E-Shop</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=7,8,edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../static/style.css" type="text/css" media="all" />
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <span class="logo"><a href="/">E-Shop</a></span>
+        <span id="sbar_toggler" onclick="onav()">&#8801;</span>
+        <div id="d_links">
+            <a class="sbar_links" href="/">Home</a>
+            {% if session.email %}
+            <a href="/logout" class="sbar_links">logout</a>
+            {% else %}
+            <a href="/login" class="sbar_links">login</a>
+            <a href="/signup" class="sbar_links">signup</a>
+            {% endif %}
+            <a href="/cart" class="sbar_links">cart</a>
+            <a class="sbar_links" href="/category/shoes">Shoes</a>
+            <a class="sbar_links" href="/category/gadgets">Gadgets</a>
+            <a class="sbar_links" href="/category/clothes">Clothes</a>
+        </div>
+    </header>
+    <div id="side_bar" style="transform: translateX(-100vw)">
+        <span id="hide_sbar" onclick="cnav()">&times;</span>
+        <div id="sbar_inner">
+            <a class="sbar_links" href="/">Home</a>
+            {% if session.email %}
+            <a href="/logout" class="sbar_links">logout</a>
+            {% else %}
+            <a href="/login" class="sbar_links">login</a>
+            <a href="/signup" class="sbar_links">signup</a>
+            {% endif %}
+            <a href="/cart" class="sbar_links">cart</a>
+            <a class="sbar_links" href="/category/shoes">Shoes</a>
+            <a class="sbar_links" href="/category/gadgets">Gadgets</a>
+            <a class="sbar_links" href="/category/clothes">Clothes</a>
+        </div>
+    </div>
+    <div id="main">
+        <form class="form" action=" " method="post">
+            <div class="form-group">
+                <label class="text-black" for="fname">First name</label>
+                <input type="text" class="form-control" id="fname">
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label class="text-black" for="lname">Last name</label>
+                    <input type="text" class="form-control" id="lname">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="text-black" for="email">Email address</label>
+                <input type="email" class="form-control" id="email">
+            </div>
+            <div class="form-group mb-5">
+                <label class="text-black" for="message">Message</label>
+                <textarea name="" class="form-control" id="message" cols="30" rows="5"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary-hover-outline">Send Message</button>
+        </form>
+    </div>
+    <script src="static/main.js" type="text/javascript" charset="utf-8"></script>
+</body>
+</html>
